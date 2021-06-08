@@ -1,19 +1,22 @@
 package com.example.pasgenap_robertlyonistanto_10rpl2_27;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerViewAccessibilityDelegate;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.widget.Toast;
+import android.view.MenuItem;
+import android.widget.Adapter;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+    private ListClubAdapter adapter;
     private RecyclerView rvClub;
     private ArrayList<Club> list = new ArrayList<>();
 
@@ -24,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
 
         rvClub = findViewById(R.id.rv_club);
         rvClub.setHasFixedSize(true);
+
+        adapter = new ListClubAdapter(list);
 
         list.addAll(ClubData.getListData());
         showRecyclerList();
@@ -44,5 +49,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case 01:
+                Snackbar.make(findViewById(R.id.rootId), "Item Deleted", Snackbar.LENGTH_SHORT).show();
+                adapter.removeItem(item.getGroupId());
+                return true;
 
+            case 02:
+                Snackbar.make(findViewById(R.id.rootId), "Favorited", Snackbar.LENGTH_SHORT).show();
+                return true;
+
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.pasgenap_robertlyonistanto_10rpl2_27;
 
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -36,18 +38,18 @@ public class ListClubAdapter extends RecyclerView.Adapter<ListClubAdapter.ListVi
 
     @Override
     public void onBindViewHolder(@NonNull ListClubAdapter.ListViewHolder holder, int position) {
-        Club klub = listClub.get(position);
+        Club club = listClub.get(position);
         Glide.with(holder.itemView.getContext())
-                .load(klub.getFoto())
+                .load(club.getFoto())
                 .apply(new RequestOptions().override(55, 55))
                 .into(holder.imgPhoto);
-        holder.tvName.setText(klub.getName());
-        holder.tvDetail.setText(klub.getDetail());
+        holder.tvName.setText(club.getName());
+        holder.tvDetail.setText(club.getDetail());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onItemClickCallback.onItemClicked(listClub.get(holder.getAdapterPosition()));
+                onItemClickCallback.onItemClicked(listClub.get(holder.getAbsoluteAdapterPosition()));
             }
         });
     }
@@ -57,15 +59,25 @@ public class ListClubAdapter extends RecyclerView.Adapter<ListClubAdapter.ListVi
         return listClub.size();
     }
 
-    class ListViewHolder extends RecyclerView.ViewHolder {
+    public class ListViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         ImageView imgPhoto;
         TextView tvName, tvDetail;
+        CardView cardView;
 
         ListViewHolder(View itemview) {
             super(itemview);
             imgPhoto = itemview.findViewById(R.id.img_item_club);
             tvName = itemview.findViewById(R.id.tv_item_name);
             tvDetail = itemview.findViewById(R.id.tv_item_detail);
+            cardView = itemview.findViewById(R.id.mCardView);
+            cardView.setOnCreateContextMenuListener(this);
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            menu.setHeaderTitle("Select an option");
+            menu.add(this.getAbsoluteAdapterPosition(), 01, 0, "Delete This Item");
+            menu.add(this.getAbsoluteAdapterPosition(), 02, 1, "Favorite");
         }
     }
 
@@ -73,4 +85,8 @@ public class ListClubAdapter extends RecyclerView.Adapter<ListClubAdapter.ListVi
         void onItemClicked(Club data);
     }
 
+    public void removeItem (int position){
+        listClub.remove(position);
+        notifyDataSetChanged();
+    }
 }
